@@ -1,6 +1,7 @@
 name: Test Discord Failure Notifier
 
 on:
+  push:
   workflow_dispatch:
 
 jobs:
@@ -11,7 +12,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
+      - name: Failed step
+        run: exit 1
+
       - name: Run local Discord Failure Notifier
+        if: failure()
         uses: ./
         with:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
