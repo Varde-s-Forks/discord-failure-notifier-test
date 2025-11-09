@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import type { GitHubJobsResponse } from "./types";
 
-async function getFailedSteps(): Promise<string> {
+async function getFailedSteps(token: string): Promise<string> {
   // Fetch jobs for this run
   const url =
     `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}` +
@@ -9,7 +9,7 @@ async function getFailedSteps(): Promise<string> {
 
   const jobsRes = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      Authorization: `token ${token}`,
       Accept: "application/vnd.github+json",
     },
   });
@@ -36,7 +36,10 @@ async function getFailedSteps(): Promise<string> {
 
 async function run(): Promise<void> {
   try {
-    const webhookUrl = core.getInput("webhook-url", { required: true });
+    const inputs = {
+      webhookUrl: core.getInput("webhook-url", { required: true }),
+      token: core.getInput("token", { required: true }),
+    };
     const repo = process.env.GITHUB_REPOSITORY || "";
     const runId = process.env.GITHUB_RUN_ID;
     const serverUrl = process.env.GITHUB_SERVER_URL;
@@ -47,7 +50,7 @@ async function run(): Promise<void> {
     const headRef = process.env.GITHUB_HEAD_REF;
     const branch = headRef || ref.replace("refs/heads/", "");
 
-    const failedSteps = await getFailedSteps();
+    const failedSteps = await getFailedSteps(inputs.token);
 
     const title = `"${jobName}" failed on ${branch} branch`;
     const description =
@@ -70,7 +73,7 @@ async function run(): Promise<void> {
       embeds: [embed],
     };
 
-    const res = await fetch(webhookUrl, {
+    const res = await fetch(inputs.webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

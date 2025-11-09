@@ -19810,11 +19810,11 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 
 // src/index.ts
 var core = __toESM(require_core());
-async function getFailedSteps() {
+async function getFailedSteps(token) {
   const url = `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/jobs`;
   const jobsRes = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      Authorization: `token ${token}`,
       Accept: "application/vnd.github+json"
     }
   });
@@ -19829,7 +19829,10 @@ async function getFailedSteps() {
 }
 async function run() {
   try {
-    const webhookUrl = core.getInput("webhook-url", { required: true });
+    const inputs = {
+      webhookUrl: core.getInput("webhook-url", { required: true }),
+      token: core.getInput("token", { required: true })
+    };
     const repo = process.env.GITHUB_REPOSITORY || "";
     const runId = process.env.GITHUB_RUN_ID;
     const serverUrl = process.env.GITHUB_SERVER_URL;
@@ -19839,7 +19842,7 @@ async function run() {
     const ref = process.env.GITHUB_REF || "";
     const headRef = process.env.GITHUB_HEAD_REF;
     const branch = headRef || ref.replace("refs/heads/", "");
-    const failedSteps = await getFailedSteps();
+    const failedSteps = await getFailedSteps(inputs.token);
     const title = `"${jobName}" failed on ${branch} branch`;
     const description = `**Workflow:** ${workflow}
 **Job:** ${jobName}
@@ -19858,7 +19861,7 @@ ${failedSteps}
       avatar_url: "https://github.githubassets.com/favicons/favicon.png",
       embeds: [embed]
     };
-    const res = await fetch(webhookUrl, {
+    const res = await fetch(inputs.webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
