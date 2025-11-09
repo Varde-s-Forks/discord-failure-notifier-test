@@ -19831,7 +19831,7 @@ async function run() {
       timestamp: (/* @__PURE__ */ new Date()).toISOString()
     };
     const payload = {
-      username: `GitHub - ${repo}`,
+      username: `GitHub Action (${repo})`,
       avatar_url: "https://github.githubassets.com/favicons/favicon.png",
       embeds: [embed]
     };
@@ -19841,7 +19841,8 @@ async function run() {
       body: JSON.stringify(payload)
     });
     if (!res.ok) {
-      throw new Error(`Failed to send Discord webhook: ${res.statusText}`);
+      const text = await res.text();
+      throw new Error(`Failed to send Discord webhook: ${res.status} ${res.statusText} - ${text}`);
     }
     core.info("Discord notification sent.");
   } catch (err) {

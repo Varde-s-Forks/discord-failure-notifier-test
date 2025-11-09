@@ -16,12 +16,12 @@ async function run(): Promise<void> {
     const embed = {
       title: `[${repo}] ${workflow} failed on ${branch}`,
       description: `**Job:** ${job}\n**Workflow:** ${workflow}\n[View run in GitHub Actions](${runUrl})`,
-      color: 0xff0000,
+      color: 16711680,
       timestamp: new Date().toISOString(),
     };
 
     const payload = {
-      username: `GitHub - ${repo}`,
+      username: `GitHub Action (${repo})`,
       avatar_url: "https://github.githubassets.com/favicons/favicon.png",
       embeds: [embed],
     };
@@ -33,7 +33,8 @@ async function run(): Promise<void> {
     });
 
     if (!res.ok) {
-      throw new Error(`Failed to send Discord webhook: ${res.statusText}`);
+      const text = await res.text();
+      throw new Error(`Failed to send Discord webhook: ${res.status} ${res.statusText} - ${text}`);
     }
 
     core.info("Discord notification sent.");
