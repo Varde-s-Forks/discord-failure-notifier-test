@@ -19735,10 +19735,10 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       (0, command_1.issueCommand)("error", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
     }
     exports2.error = error;
-    function warning2(message, properties = {}) {
+    function warning(message, properties = {}) {
       (0, command_1.issueCommand)("warning", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
     }
-    exports2.warning = warning2;
+    exports2.warning = warning;
     function notice(message, properties = {}) {
       (0, command_1.issueCommand)("notice", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
     }
@@ -19810,24 +19810,6 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 
 // src/index.ts
 var core = __toESM(require_core());
-async function getFailedSteps(token) {
-  const url = `${process.env.GITHUB_API_URL}/repos/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}/jobs`;
-  const jobsRes = await fetch(url, {
-    headers: {
-      Authorization: `token ${token}`,
-      Accept: "application/vnd.github+json"
-    }
-  });
-  if (!jobsRes.ok) {
-    const txt = await jobsRes.text();
-    throw new Error(`Failed to fetch job data: ${jobsRes.status} ${txt}`);
-  }
-  const jobsData = await jobsRes.json();
-  const job = jobsData.jobs.find((j) => j.name === process.env.GITHUB_JOB);
-  core.warning(job);
-  const failedSteps = job?.steps?.filter((s) => s.conclusion === "failure")?.map((s) => `\u274C ${s.name}`)?.join("\n") || "Unknown";
-  return failedSteps;
-}
 async function run() {
   try {
     const inputs = {
@@ -19843,13 +19825,9 @@ async function run() {
     const ref = process.env.GITHUB_REF || "";
     const headRef = process.env.GITHUB_HEAD_REF;
     const branch = headRef || ref.replace("refs/heads/", "");
-    const failedSteps = await getFailedSteps(inputs.token);
     const title = `"${jobName}" failed on ${branch} branch`;
     const description = `**Workflow:** ${workflow}
 **Job:** ${jobName}
-**Failed step(s):**
-${failedSteps}
-
 [View run in GitHub Actions](${runUrl})`;
     const embed = {
       title,
