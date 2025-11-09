@@ -19831,7 +19831,7 @@ async function run() {
       timestamp: (/* @__PURE__ */ new Date()).toISOString()
     };
     const payload = {
-      username: `GitHub Action (${repo})`,
+      username: `GitHub - ${repo?.replace(/discord/gi, "[redacted]")}`,
       avatar_url: "https://github.githubassets.com/favicons/favicon.png",
       embeds: [embed]
     };
