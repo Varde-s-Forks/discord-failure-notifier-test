@@ -19735,10 +19735,10 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       (0, command_1.issueCommand)("error", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
     }
     exports2.error = error;
-    function warning(message, properties = {}) {
+    function warning2(message, properties = {}) {
       (0, command_1.issueCommand)("warning", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
     }
-    exports2.warning = warning;
+    exports2.warning = warning2;
     function notice(message, properties = {}) {
       (0, command_1.issueCommand)("notice", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
     }
@@ -19824,6 +19824,7 @@ async function getFailedSteps(token) {
   }
   const jobsData = await jobsRes.json();
   const job = jobsData.jobs.find((j) => j.name === process.env.GITHUB_JOB);
+  core.warning(job);
   const failedSteps = job?.steps?.filter((s) => s.conclusion === "failure")?.map((s) => `\u274C ${s.name}`)?.join("\n") || "Unknown";
   return failedSteps;
 }
@@ -19846,7 +19847,7 @@ async function run() {
     const title = `"${jobName}" failed on ${branch} branch`;
     const description = `**Workflow:** ${workflow}
 **Job:** ${jobName}
-**Failed steps:**
+**Failed step(s):**
 ${failedSteps}
 
 [View run in GitHub Actions](${runUrl})`;

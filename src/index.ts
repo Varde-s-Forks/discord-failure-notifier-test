@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import type { GitHubJobsResponse } from "./types";
+import type { GitHubJobsResponse, GitHubJob } from "./types";
 
 async function getFailedSteps(token: string): Promise<string> {
   // Fetch jobs for this run
@@ -23,6 +23,8 @@ async function getFailedSteps(token: string): Promise<string> {
 
   // Find current job
   const job = jobsData.jobs.find((j) => j.name === process.env.GITHUB_JOB);
+
+  core.warning(job);
 
   // Get failed steps
   const failedSteps =
@@ -56,7 +58,7 @@ async function run(): Promise<void> {
     const description =
       `**Workflow:** ${workflow}\n` +
       `**Job:** ${jobName}\n` +
-      `**Failed steps:**\n${failedSteps}` +
+      `**Failed step(s):**\n${failedSteps}` +
       `\n\n` +
       `[View run in GitHub Actions](${runUrl})`;
 
@@ -82,7 +84,8 @@ async function run(): Promise<void> {
     if (!res.ok) {
       const text = await res.text();
       throw new Error(
-        `Failed to send Discord webhook: ${res.status} ${res.statusText} - ${text}`,
+        `Failed to send Discord webhook: ` +
+          `${res.status} ${res.statusText} - ${text}`,
       );
     }
 
