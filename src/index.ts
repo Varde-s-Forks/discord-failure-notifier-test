@@ -45,7 +45,7 @@ async function run(): Promise<void> {
     const repo = process.env.GITHUB_REPOSITORY || "";
     const runId = process.env.GITHUB_RUN_ID;
     const serverUrl = process.env.GITHUB_SERVER_URL;
-    const runUrl = `${serverUrl}/${repo}/actions/runs/${runId}`;
+    const runUrl = `${serverUrl}/${repo}/actions/runs/${runId}/job/`;
     const workflow = process.env.GITHUB_WORKFLOW;
     const jobName = process.env.GITHUB_JOB;
     const ref = process.env.GITHUB_REF || "";
@@ -60,7 +60,7 @@ async function run(): Promise<void> {
       `**Job:** ${jobName}\n` +
       // `**Failed step(s):**\n${failedSteps}` +
       // `\n\n` +
-      `[View run in GitHub Actions](${runUrl})`;
+      `[View run in GitHub Actions](${process.env.GITHUB_JOB_HTML_URL})`;
 
     const embed = {
       title: title,
