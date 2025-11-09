@@ -1,0 +1,13 @@
+name: "Discord Failure Notifier"
+description: "Send a Discord webhook message when a workflow job fails"
+author: "Jaded-Encoding-Thaumaturgy"
+
+inputs:
+  webhook-url:
+    description: "Discord webhook URL"
+    required: false
+    default: ${{ secrets.WEBHOOK_URL }}
+
+runs:
+  using: "node24"
+  main: "dist/index.js"
