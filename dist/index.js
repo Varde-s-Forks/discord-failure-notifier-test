@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 async function run() {
     try {
-        const webhookUrl = core.getInput("webhook-url");
+        const webhookUrl = core.getInput("webhook-url", { required: true });
         const repo = process.env.GITHUB_REPOSITORY;
         const runId = process.env.GITHUB_RUN_ID;
         const serverUrl = process.env.GITHUB_SERVER_URL;

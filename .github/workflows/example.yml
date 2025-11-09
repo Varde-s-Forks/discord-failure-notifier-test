@@ -1,4 +1,4 @@
-name: Test VapourSynth Setup Action
+name: Test Discord Failure Notifier
 
 on:
   workflow_dispatch:
@@ -13,3 +13,5 @@ jobs:
 
       - name: Run local Discord Failure Notifier
         uses: ./
+        with:
+          webhook-url: ${{ secrets.WEBHOOK_URL }}

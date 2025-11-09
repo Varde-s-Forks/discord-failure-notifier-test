@@ -5,8 +5,7 @@ author: "Jaded-Encoding-Thaumaturgy"
 inputs:
   webhook-url:
     description: "Discord webhook URL"
-    required: false
-    default: ${{ secrets.WEBHOOK_URL }}
+    required: true
 
 runs:
   using: "node24"
